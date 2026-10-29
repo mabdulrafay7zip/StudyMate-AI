@@ -73,6 +73,13 @@ python cli.py --file my_notes.pdf
 python cli.py --file notes.txt --retriever tfidf -q "Define recall"
 ```
 
+### CLI options worth knowing
+
+- `--question` / `-q` is repeatable — ask several questions in one run, e.g. `python cli.py --file sample_notes.md -q "What is overfitting?" -q "Define recall"`.
+- `--top-k N` changes how many chunks are retrieved per question (default 3).
+- In interactive mode, type `quit`, `exit` or `q` to leave.
+- Every answer prints its method (`extractive` or `ollama`) and a Sources list giving each chunk's index, similarity score and source file, so you can check where the answer came from.
+
 A sample document, `sample_notes.md` (original notes on *Introduction to
 Machine Learning*), is included so you can try it immediately.
 
