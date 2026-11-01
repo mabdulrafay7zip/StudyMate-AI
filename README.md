@@ -79,6 +79,13 @@ python cli.py --file notes.txt --retriever tfidf -q "Define recall"
 - `--top-k N` changes how many chunks are retrieved per question (default 3).
 - In interactive mode, type `quit`, `exit` or `q` to leave.
 - Every answer prints its method (`extractive` or `ollama`) and a Sources list giving each chunk's index, similarity score and source file, so you can check where the answer came from.
+- `--retriever auto|embeddings|tfidf` picks the retrieval backend (default `auto`: embeddings when available, TF-IDF otherwise — use `--retriever tfidf` to force the always-works fallback).
+### Interpreting the CLI output
+
+- On startup the CLI prints `Loaded N chunks from <file> (retriever: <name>)`, where `name` is `embeddings` or `tfidf` — so you can see which backend `auto` actually picked. If the document contains no readable text, it prints `No readable text found in that document.` and exits.
+- Each answer prints a `Q:` line, then `A (extractive): ...` or `A (ollama): ...`, followed by a Sources list of the form `chunk <index> (score 0.xxx, <file>): <the chunk's opening text, up to 220 characters>`, where the score is that chunk's retrieval similarity.
+- The extractive answer is at most 3 sentences, chosen for sharing content words with your question and shown in document order — it quotes your notes rather than explaining beyond them.
+- If no sentence in the retrieved chunks shares a content word with your question, the answer instead quotes the opening of the best-matching chunk rather than saying it does not know — check the Sources before trusting such an answer. Only when no usable sentence exists at all does it print `I could not find anything about that in your document.`.
 
 A sample document, `sample_notes.md` (original notes on *Introduction to
 Machine Learning*), is included so you can try it immediately.
