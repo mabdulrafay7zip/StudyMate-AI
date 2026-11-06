@@ -60,6 +60,13 @@ the app automatically falls back to TF-IDF retrieval.
 streamlit run app.py
 ```
 
+### Using the web app
+
+- Upload a `.pdf`, `.txt` or `.md` file with the file uploader — those are the only three types the app accepts. If the file has no readable text it stops with `No readable text found in that file.`
+- While the document is being indexed you see an "Indexing your document…" spinner; when it finishes the app reports `Indexed N chunks (retriever: <name>)`, so you can see which backend `auto` actually picked.
+- Type your question in the "Your question" box. The web app always searches the top 3 chunks (there is no `--top-k` here, unlike the CLI) and shows the answer with an `Answer method: extractive/ollama` caption underneath.
+- Every answer comes with a "📖 Sources" expander listing the chunks it is grounded in — each with its chunk index, similarity score (3 decimals) and the full chunk text — so you can verify the answer against your own notes.
+
 **Command line:**
 
 ```bash
