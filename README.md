@@ -177,6 +177,11 @@ answers from the retrieved chunks. Set `OLLAMA_MODEL` to pick a model and
 `OLLAMA_HOST` if it is not on `http://localhost:11434`. With no Ollama
 server, the extractive answerer is used — nothing else changes.
 
+- No fixed default model: with `OLLAMA_MODEL` unset, StudyMate  uses the first model in the list Ollama returns (`GET /api/tags`) — so which model answers depends on your local Ollama setup. Set `OLLAMA_MODEL` (e.g. `OLLAMA_MODEL=llama3.2`) to pin one.
+- - Detection is a quick probe of `OLLAMA_HOST/api/tags` (default `http://localhost:11434`, 2-second timeout). If the server is down, has no models pulled, or the request fails, StudyMate silently falls back to the extractive answerer — the answer still arrives, labelled `extractive`.
+  - - The Ollama prompt carries the same grounding rule as the extractive answerer: answer using ONLY the notes, and say so if the notes do not contain the answer.
+    - - There is no flag to turn Ollama off — both the CLI and the web app try it whenever it is reachable. To force extractive answers, stop the Ollama server.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
