@@ -139,6 +139,14 @@ Also verified end-to-end: the CLI answers questions against a **PDF**
 version of the sample notes (12 chunks, correct source citations), and the
 Streamlit app starts and serves cleanly.
 
+### Interpreting the evaluate.py output
+
+- Each run starts with a header line `Retriever: <name> | chunks: N | questions: M` — so you can see which backend `auto` picked, how many chunks your file produced (12 for `sample_notes.md`) and whether you are running the 12-question main set or the 3-question paraphrase probe.
+- One line is printed per question: `[HIT ]` or `[MISS]`, then `top1=True/False`, `top3=True/False`, the `best_chunk` index, its similarity `score` (3 decimals) and the question itself.
+- A "hit" means one of the question's expected keywords appears in the retrieved chunk text — top-1 checks only the best chunk, top-3 checks any of the three retrieved chunks. A top-1 MISS with a top-3 HIT means the answer chunk was found but not ranked first.
+- The run ends with `Top-1 hit rate: X/N = ...%` and `Top-3 hit rate: X/N = ...%` — the two numbers quoted in the tables above.
+- `--paraphrase` swaps in the 3 harder questions (worded without the notes' vocabulary) instead of the main 12; `--file <your-notes.md>` runs the same 12 questions against a different document, but the questions are written for the sample notes, so the hit rates only mean something on that file.
+
 ## Project structure
 
 ```
@@ -177,7 +185,7 @@ answers from the retrieved chunks. Set `OLLAMA_MODEL` to pick a model and
 `OLLAMA_HOST` if it is not on `http://localhost:11434`. With no Ollama
 server, the extractive answerer is used — nothing else changes.
 
-- No fixed default model: with `OLLAMA_MODEL` unset, StudyMate  uses the first model in the list Ollama returns (`GET /api/tags`) — so which model answers depends on your local Ollama setup. Set `OLLAMA_MODEL` (e.g. `OLLAMA_MODEL=llama3.2`) to pin one.
+- No fixed default model: with `OLLAMA_MODEL` unset, StudyMate uses the first model in the list Ollama returns (`GET /api/tags`) — so which model answers depends on your local Ollama setup. Set `OLLAMA_MODEL` (e.g. `OLLAMA_MODEL=llama3.2`) to pin one.
 - Detection is a quick probe of `OLLAMA_HOST/api/tags` (default `http://localhost:11434`, 2-second timeout). If the server is down, has no models pulled, or the request fails, StudyMate silently falls back to the extractive answerer — the answer still arrives, labelled `extractive`.
 - The Ollama prompt carries the same grounding rule as the extractive answerer: answer using ONLY the notes, and say so if the notes do not contain the answer.
 - There is no flag to turn Ollama off — both the CLI and the web app try it whenever it is reachable. To force extractive answers, stop the Ollama server.
